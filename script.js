@@ -1,5 +1,5 @@
 // 🔑 Replace with your GNews API key
-const API_KEY = 'YOUR_GNEWS_API_KEY';
+const API_KEY = 'YOUR_GNEWS_255256f0db74233cab58c99b144f684b';
 const BASE_URL = 'https://gnews.io/api/v4';
 
 const articlesContainer = document.getElementById('articles');
