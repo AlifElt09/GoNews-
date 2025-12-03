@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berita Sederhana</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+  <div class="container mx-auto px-4 max-w-4xl">
+    <h1 class="text-3xl font-bold text-center mb-6 text-blue-700">📰 Berita Hari Ini</h1>
+
+    <!-- Tombol Ambil Berita -->
+    <div class="text-center mb-6">
+      <button id="fetchBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium">
+        Ambil Berita
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="hidden text-center text-gray-500">Loading...</div>
+
+    <!-- Error -->
+    <div id="error" class="hidden text-center text-red-500 font-medium"></div>
+
+    <!-- Daftar Berita -->
+    <div id="newsContainer" class="space-y-6"></div>
+  </div>
+
+  <script>
+    // GANTI DENGAN API KEY KAMU
+    const API_KEY = 'b382b0617bcc49f9a93a6ebc4a134af1';
+
+    const fetchBtn = document.getElementById('fetchBtn');
+    const loading = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const newsContainer = document.getElementById('newsContainer');
+
+    fetchBtn.addEventListener('click', async () => {
+      // Reset tampilan
+      newsContainer.innerHTML = '';
+      errorEl.classList.add('hidden');
+      loading.classList.remove('hidden');
+
+      try {
+        // Ambil berita dari NewsAPI (berita umum dari AS)
+        const response = await fetch(
+          `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
+        );
+
+        const data = await response.json();
+
+        if (data.status !== 'ok') throw new Error(data.message || 'Gagal ambil data');
+
+        loading.classList.add('hidden');
+
+        // Tampilkan berita
+        data.articles.slice(0, 6).forEach(article => {
+          if (!article.title) return;
+
+          const card = document.createElement('div');
+          card.className = 'bg-white p-5 rounded-lg shadow';
+
+          // Jika ada gambar, tampilkan
+          let imgHtml = '';
+          if (article.urlToImage) {
+            imgHtml = `<img src="${article.urlToImage}" alt="berita" class="w-full h-48 object-cover rounded mb-3" />`;
+          }
+
+          card.innerHTML = `
+            ${imgHtml}
+            <h2 class="text-xl font-bold mb-2">${article.title}</h2>
+            <p class="text-gray-600 text-sm mb-3">${article.description || ''}</p>
+            <a href="${article.url}" target="_blank" class="text-blue-600 hover:underline font-medium">
+              Baca Selengkapnya →
+            </a>
+          `;
+
+          news_container.appendChild(card); // ← SALAH! harus newsContainer
+        });
+      } catch (err) {
+        loading.classList.add('hidden');
+        errorEl.textContent = '⚠️ ' + (err.message || 'Gagal mengambil berita.');
+        errorEl.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
